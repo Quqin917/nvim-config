@@ -1,72 +1,55 @@
-opt = vim.o
+local opt = vim.opt
 
--- tabs & indentation
-opt.tabstop = 2 -- 2 spaces for tabs (prettier default)
-opt.shiftwidth = 2 -- 2 spaces for indent width
+-- ==========================================
+-- 1. General Settings
+-- ==========================================
+opt.tabstop = 2
+opt.shiftwidth = 2
+opt.expandtab = true
 opt.softtabstop = 2
-opt.expandtab = true -- expand tab to spaces
-
 opt.background = "dark"
-opt.winborder = "rounded"
-vim.opt.clipboard:append "unnamedplus"
-
-opt.swapfile = false
-
+opt.termguicolors = true
 opt.number = true
 opt.relativenumber = true
 opt.signcolumn = "yes"
+opt.splitbelow = true
+opt.splitright = true
+opt.swapfile = false
+opt.undofile = true
+opt.clipboard:append "unnamedplus"
 
-vim.opt.runtimepath:append( vim.fn.stdpath("config") .. "/lua")
+-- Typewriter Scrolling (Keep cursor in middle)
+-- opt.scrolloff = 999
+-- opt.sidescrolloff = 15 -- Fixed: Added 'opt.' here
 
-require 'mappings'
+-- Set Leader Key (Must be before plugins load)
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
-vim.pack.add({
-  "https://github.com/catppuccin/nvim",
-  "https://github.com/nvim-treesitter/nvim-treesitter-context",
- 	"https://github.com/neovim/nvim-lspconfig",
-  "https://github.com/stevearc/oil.nvim",
-  "https://github.com/folke/which-key.nvim",
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = 'main' },
+-- Load Mappings
+require "mappings"
+
+-- ==========================================
+-- 2. Bootstrap Lazy.nvim
+-- ==========================================
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system {
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  }
+end
+opt.rtp:prepend(lazypath)
+
+-- ==========================================
+-- 3. Plugins
+-- ==========================================
+require("lazy").setup({
+  { import = "packages" },
+}, {
+  change_detection = { notify = false },
 })
-
-require "themes.catppuccin"
-
-local ts = { "lua", "c", "cpp", }
-require"nvim-treesitter".install = ts
-
-local lspServer = { "lua_ls", "clangd" }
-vim.lsp.enable( lspServer )
-
-require"nvim-treesitter".setup {
-  highlight = { enable = true },
-}
-
-vim.api.nvim_create_autocmd("PackChanged", {
-  callback = function(_)
-    require"nvim-treesitter".update()
-  end,
-})
-
-require"treesitter-context".setup {
-  max_lines = 3,
-  multiline_threshold = 1,
-  seperator = "-",
-  min_window_height = 20,
-  line_numbers = true,
-}
-
-vim.api.nvim_create_autocmd("FileType", {
-  callback = function(args)
-    local filetype = args.match
-    local language = vim.treesitter.language.get_lang(filetype)
-    if vim.treesitter.language.add(language) then
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-      vim.treesitter.start()
-    end
-  end,
-})
-
-require"oil".setup({})
-vim.keymap.set("n", "`", require"oil".toggle_float, { desc = "Open parent directory" })
-
-vim.cmd(":hi statusline guibg=NONE")

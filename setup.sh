@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FOLDER="nvim-native"
+FOLDER="nvim-lazy"
 DIR=$(dirname "$0")"/$FOLDER"
 cd "$DIR" || exit
 
@@ -22,11 +22,10 @@ printf "DESTINATION FILE:\t\t %s\n" "$DESTINATION"
 substep_info "Creating nvim Config Folder"
 
 if [ "$FOLDER" = "nvim-lazy" ]; then
-  mkdir -vp "$DESTINATION/lua/themes"
-  mkdir -vp "$DESTINATION/lua/plugins"
+  mkdir -vp "$DESTINATION/lua/packages"
 fi
 
-if [ "$FOLDER" = "nvim-native" ]; then
+if [ "$FOLDER" = "nvim-bare" ]; then
   mkdir -vp "$DESTINATION/lua/quqin/core"
   mkdir -vp "$DESTINATION/lua/quqin/themes"
   mkdir -vp "$DESTINATION/lua/quqin/plugins"

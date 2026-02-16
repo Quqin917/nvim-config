@@ -1,25 +1,84 @@
-vim.g.mapleader = " "
-
 local map = vim.keymap.set
 
--- Better navigation for Up and Down
+-- =============================================================
+-- 1. NAVIGATION (Typewriter / Centered)
+-- =============================================================
+
+-- Center cursor when scrolling half-pages
+map("n", "<C-d>", "<C-d>zz", { desc = "Scroll Down & Center" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Scroll Up & Center" })
+
+-- Center cursor when searching
+map("n", "n", "nzzzv", { desc = "Next Result & Center" })
+map("n", "N", "Nzzzv", { desc = "Prev Result & Center" })
+
+-- Center screen after pressing Enter in Insert Mode
+-- (Fixes "bottom of file" scrolling issue)
+map("i", "<CR>", "<CR><C-o>zz", { silent = true })
+
+-- Better Up/Down (Handles wrapped lines)
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 map({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
--- Move window using ctrl
+-- =============================================================
+-- 2. PLUGIN CONTROLS (The IDE Features)
+-- =============================================================
+
+-- [FILE EXPLORER] NvimTree
+map("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
+
+-- [SEARCH] Telescope
+-- Note: Make sure telescope is installed!
+map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
+map("n", "<leader>fw", "<cmd>Telescope live_grep<CR>", { desc = "Find Text" })
+map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Find Buffers" })
+map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "Help Pages" })
+
+-- [GIT] LazyGit
+map("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>", { desc = "Toggle LazyGit" })
+
+-- [TERMINAL] ToggleTerm (Float)
+-- Note: <C-\> also toggles it by default
+map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<CR>", { desc = "Float Terminal" })
+
+-- [FORMATTING] Conform
+map("n", "<leader>fm", function() require("conform").format { lsp_fallback = true } end, { desc = "Format File" })
+
+-- [ZEN MODE] Focus
+map("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "Toggle Zen Mode" })
+
+-- =============================================================
+-- 3. WINDOW & BUFFER MANAGEMENT
+-- =============================================================
+
+-- Move focus between windows
 map("n", "<C-h>", "<C-w>h", { desc = "Left Window", remap = true })
 map("n", "<C-l>", "<C-w>l", { desc = "Right Window", remap = true })
 map("n", "<C-j>", "<C-w>j", { desc = "Down Window", remap = true })
 map("n", "<C-k>", "<C-w>k", { desc = "Up Window", remap = true })
 
--- Saving
-map({ "n", "i", "v" }, "<C-s>", "<CMD>write<CR>")
-map({ "n", "i", "v" }, "<A-s>", "<CMD>wq<CR>")
+-- Resize windows with arrows
+map("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase Height" })
+map("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease Height" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease Width" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase Width" })
 
-map("n", "<leader>bd", "<CMD>bd<CR>", { desc = "Buffer Delete" })
-map("n", "<leader>u", "<CMD>source<CR>", { desc = "Source Current Files" })
+-- Buffer Navigation (Tabs)
+map("n", "<Tab>", "<cmd>bnext<CR>", { desc = "Next Buffer" })
+map("n", "<S-Tab>", "<cmd>bprev<CR>", { desc = "Prev Buffer" })
+map("n", "<leader>x", "<cmd>bdelete<CR>", { desc = "Close Buffer" })
+
+-- =============================================================
+-- 4. SYSTEM
+-- =============================================================
+
+-- Quick Save & Quit
+map({ "n", "i", "v" }, "<C-s>", "<CMD>write<CR>", { desc = "Save" })
+map({ "n", "i", "v" }, "<A-s>", "<CMD>wq<CR>", { desc = "Save & Quit" })
 
 map("n", "<leader>q", "<CMD>quit<CR>", { desc = "Exit Neovim" })
-map("n", "<leader>r", "<CMD>restart<CR>", { desc = "Restart Neovim" })
+
+-- Clear search highlights with Esc
+map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear Highlights" })
