@@ -23,34 +23,7 @@ map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, 
 map({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
 -- =============================================================
--- 2. PLUGIN CONTROLS (The IDE Features)
--- =============================================================
-
--- [FILE EXPLORER] NvimTree
-map("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle Explorer" })
-
--- [SEARCH] Telescope
--- Note: Make sure telescope is installed!
-map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
-map("n", "<leader>fw", "<cmd>Telescope live_grep<CR>", { desc = "Find Text" })
-map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Find Buffers" })
-map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "Help Pages" })
-
--- [GIT] LazyGit
-map("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>", { desc = "Toggle LazyGit" })
-
--- [TERMINAL] ToggleTerm (Float)
--- Note: <C-\> also toggles it by default
-map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<CR>", { desc = "Float Terminal" })
-
--- [FORMATTING] Conform
-map("n", "<leader>fm", function() require("conform").format { lsp_fallback = true } end, { desc = "Format File" })
-
--- [ZEN MODE] Focus
-map("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "Toggle Zen Mode" })
-
--- =============================================================
--- 3. WINDOW & BUFFER MANAGEMENT
+-- 2. WINDOW & BUFFER MANAGEMENT
 -- =============================================================
 
 -- Move focus between windows
@@ -71,14 +44,14 @@ map("n", "<S-Tab>", "<cmd>bprev<CR>", { desc = "Prev Buffer" })
 map("n", "<leader>x", "<cmd>bdelete<CR>", { desc = "Close Buffer" })
 
 -- =============================================================
--- 4. SYSTEM
+-- 3. SYSTEM
 -- =============================================================
 
 -- Quick Save & Quit
 map({ "n", "i", "v" }, "<C-s>", "<CMD>write<CR>", { desc = "Save" })
 map({ "n", "i", "v" }, "<A-s>", "<CMD>wq<CR>", { desc = "Save & Quit" })
 
-map("n", "<leader>q", "<CMD>quit<CR>", { desc = "Exit Neovim" })
+map("n", "<leader>q", "<CMD>q<CR>", { desc = "Exit Neovim" })
 
 -- Clear search highlights with Esc
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear Highlights" })

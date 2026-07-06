@@ -19,8 +19,8 @@ opt.undofile = true
 opt.clipboard:append "unnamedplus"
 
 -- Typewriter Scrolling (Keep cursor in middle)
--- opt.scrolloff = 999
--- opt.sidescrolloff = 15 -- Fixed: Added 'opt.' here
+opt.scrolloff = 999
+opt.sidescrolloff = 15
 
 -- Set Leader Key (Must be before plugins load)
 vim.g.mapleader = " "
@@ -51,5 +51,5 @@ opt.rtp:prepend(lazypath)
 require("lazy").setup({
   { import = "packages" },
 }, {
-  change_detection = { notify = false },
+  change_detection = { enable = true, notify = false },
 })

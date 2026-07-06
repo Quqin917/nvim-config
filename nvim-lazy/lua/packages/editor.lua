@@ -1,68 +1,68 @@
 return {
   {
-    "stevearc/oil.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" }, -- Required for icons
+    "echasnovski/mini.files",
+    keys = {
+      {
+        "<leader>e",
+        function() require("mini.files").open(vim.api.nvim_buf_get_name(0), true) end,
+        desc = "Open Current File",
+      },
+    },
+
     config = function()
-      require("oil").setup {
-        -- Use oil as the default file explorer (replaces netrw)
-        default_file_explorer = true,
-
-        -- columns to display
-        columns = {
-          "icon",
-          -- "permissions",
-          -- "size",
-          -- "mtime",
+      require("mini.files").setup {
+        windows = {
+          preview = true,
+          width_focus = 30,
+          width_nofocus = 15,
+          width_preview = 40,
         },
-
-        -- Window customization
-        win_options = {
-          wrap = false,
-          signcolumn = "no",
-          cursorcolumn = false,
-          foldcolumn = "0",
-          spell = false,
-          list = false,
-          conceallevel = 3,
-          concealcursor = "nvic",
+        options = {
+          use_as_default_explorer = true,
         },
-
-        -- View options
-        view_options = {
-          show_hidden = true,
-          is_always_hidden = function(name, bufnr) return name == ".." or name == ".git" end,
-        },
-
-        -- Floating window styling (optional, if you use float)
-        float = {
-          padding = 2,
-          max_width = 90,
-          max_height = 0,
-          border = "rounded",
-          win_options = {
-            winblend = 0,
-          },
+        mappings = {
+          close = "q",
+          go_in = "l",
+          go_in_plus = "L",
+          go_out = "h",
+          go_out_plus = "H",
+          reset = "<BS>",
+          reveal_cwd = "@",
+          show_help = "g?",
+          synchronize = "=",
+          trim_left = "<",
+          trim_right = ">",
         },
       }
-
-      -- Keymaps
-      vim.keymap.set("n", "`", "<CMD>Oil<CR>", { desc = "Open parent directory" })
     end,
   },
 
   {
-    "nvim-tree/nvim-tree.lua",
+    "echasnovski/mini.bufremove",
     version = "*",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      vim.g.loaded_netrw = 1
-      vim.g.loaded_netrwPlugin = 1
-      require("nvim-tree").setup()
-    end,
+    keys = {
+      {
+        "<leader>d",
+        function()
+          local bd = require("mini.bufremove").delete
+          if vim.bo.modified then
+            local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname()), "&Yes\n&No\n&Cancel")
+            if choice == 1 then -- Yes
+              vim.cmd.write()
+              bd(0)
+            elseif choice == 2 then -- No
+              bd(0, true)
+            end
+          else
+            bd(0)
+          end
+        end,
+        desc = "Close current buffer",
+      },
+    },
   },
 
   {
-
     "nvim-telescope/telescope.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -73,13 +73,18 @@ return {
       },
     },
 
+    keys = {
+      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep (Search Text)" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
+      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Find Help" },
+    },
+
     config = function()
       local telescope = require "telescope"
-      local builtin = require "telescope.builtin"
 
       telescope.setup {
         defaults = {
-          -- Improving the layout for coding
           layout_strategy = "horizontal",
           layout_config = {
             horizontal = { prompt_position = "top", preview_width = 0.55 },
@@ -90,12 +95,12 @@ return {
           },
           sorting_strategy = "ascending",
           winblend = 0,
-
           mappings = {
             i = {
-              ["<C-k>"] = "move_selection_previous", -- Move up
-              ["<C-j>"] = "move_selection_next", -- Move down
-              ["<C-q>"] = "send_to_qflist", -- Send to quickfix list
+              ["<C-k>"] = "move_selection_previous",
+              ["<C-j>"] = "move_selection_next",
+              ["<C-q>"] = "send_to_qflist",
+              -- Note: <C-d> to delete a buffer is already mapped natively in Telescope!
             },
           },
         },
@@ -103,25 +108,70 @@ return {
     end,
   },
 
-  -- [CODING] Autopairs (Auto close brackets/quotes)
+  -- Auto close brackets/quotes
   {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
     config = true,
   },
 
-  -- [CODING] Comment.nvim (Easy commenting with 'gcc')
+  -- Easy commenting with 'gcc'
   {
     "numToStr/Comment.nvim",
     config = function() require("Comment").setup() end,
   },
 
-  -- [CODING] Surround (Change quotes/brackets easily)
+  -- Change quotes/brackets easily
   -- Usage: `ysiw"` to surround word with ", `ds"` to delete "
   {
     "kylechui/nvim-surround",
     version = "*",
     event = "VeryLazy",
     config = function() require("nvim-surround").setup {} end,
+  },
+
+  {
+    "stevearc/overseer.nvim",
+    config = function()
+      local overseer = require "overseer"
+
+      overseer.setup {
+        dap = false,
+        strategy = "terminal",
+        templates = { "builtin" },
+        form = { border = "rounded" },
+        task_list = {
+          direction = "bottom",
+          min_height = 10,
+          max_height = 15,
+        },
+      }
+
+      -- Bear + Makefile (For C/C++ projects)
+      overseer.register_template {
+        name = "Build with Bear (Make)",
+
+        builder = function()
+          local makefile_match = vim.fs.find("Makefile", { upward = true, path = vim.fn.expand "%:p:h" })
+          local target_dir = #makefile_match > 0 and vim.fs.dirname(makefile_match[1]) or vim.fn.getcwd()
+
+          return {
+            cmd = { "bear" },
+            args = { "--", "make" },
+            cwd = target_dir,
+            components = { { "on_output_quickfix", open = true }, "default" },
+          }
+        end,
+        condition = {
+          filetype = { "c", "cpp" },
+          callback = function() return vim.fn.filereadable(vim.fn.getcwd() .. "/Makefile") == 1 end,
+        },
+      }
+
+      -- Global Keybindings for Task Management
+      vim.keymap.set("n", "<leader>or", "<cmd>OverseerRun<CR>", { desc = "Run Task" })
+      vim.keymap.set("n", "<leader>ot", "<cmd>OverseerToggle<CR>", { desc = "Toggle Overseer UI" })
+      vim.keymap.set("n", "<leader>oi", "<cmd>OverseerInfo<CR>", { desc = "Overseer Info" })
+    end,
   },
 }

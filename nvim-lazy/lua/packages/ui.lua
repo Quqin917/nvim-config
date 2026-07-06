@@ -1,5 +1,5 @@
 return {
-  -- [THEME] Catppuccin
+  -- Catppuccin
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -14,7 +14,7 @@ return {
     end,
   },
 
-  -- [NOTIFICATIONS] Fix for transparent background warning
+  -- Fix for transparent background warning
   {
     "rcarriga/nvim-notify",
     opts = {
@@ -22,7 +22,7 @@ return {
     },
   },
 
-  -- [UI] Noice (Modern Command Line & Notifications)
+  -- Modern Command Line & Notifications
   {
     "folke/noice.nvim",
     event = "VeryLazy",
@@ -46,38 +46,17 @@ return {
     },
   },
 
-  -- [STATUS LINE] Lualine
   {
-    "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = { options = { theme = "catppuccin" } },
-  },
-
-  -- [BUFFERLINE] Tabs
-  {
-    "akinsho/bufferline.nvim",
-    version = "*",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      require("bufferline").setup {
-        options = {
-          mode = "buffers",
-          separator_style = "slant",
-          always_show_bufferline = false,
-          show_buffer_close_icons = false,
-          show_close_icon = false,
-          color_icons = true,
-          diagnostics = "nvim_lsp",
-          offsets = {
-            {
-              filetype = "NvimTree",
-              text = "File Explorer",
-              text_align = "left",
-              separator = true,
-            },
-          },
-        },
-      }
-    end,
+    "stevearc/dressing.nvim",
+    event = "VeryLazy",
+    opts = {
+      input = {
+        enabled = true,
+      },
+      select = {
+        enabled = true,
+        backend = { "telescope" },
+      },
+    },
   },
 }

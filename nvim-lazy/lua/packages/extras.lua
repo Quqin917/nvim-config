@@ -1,20 +1,4 @@
 return {
-  -- [GIT] Gitsigns
-  -- See git changes in the left sidebar
-  {
-    "lewis6991/gitsigns.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    opts = {
-      signs = {
-        add = { text = "▎" },
-        change = { text = "▎" },
-        delete = { text = "" },
-        topdelete = { text = "" },
-        changedelete = { text = "▎" },
-      },
-    },
-  },
-
   -- [UI] Indent Blankline
   -- Vertical lines for indentation scope
   {
@@ -90,25 +74,6 @@ return {
         "<cmd>Trouble qflist toggle<cr>",
         desc = "Quickfix List (Trouble)",
       },
-    },
-  },
-
-  {
-    "folke/zen-mode.nvim",
-    opts = {
-      window = {
-        height = 0.85, -- height of the Zen window
-      },
-      plugins = {
-        options = {
-          enabled = true,
-          ruler = false,
-          showcmd = false,
-        },
-        twilight = { enabled = true }, -- Dim inactive code
-      },
-      -- This callback forces centering when Zen Mode opens
-      on_open = function(win) vim.wo[win].scrolloff = 999 end,
     },
   },
 }
