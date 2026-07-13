@@ -41,7 +41,6 @@ map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase Width" }
 -- Buffer Navigation (Tabs)
 map("n", "<Tab>", "<cmd>bnext<CR>", { desc = "Next Buffer" })
 map("n", "<S-Tab>", "<cmd>bprev<CR>", { desc = "Prev Buffer" })
-map("n", "<leader>x", "<cmd>bdelete<CR>", { desc = "Close Buffer" })
 
 -- =============================================================
 -- 3. SYSTEM
