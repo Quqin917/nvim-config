@@ -23,6 +23,13 @@ substep_info "Creating nvim Config Folder"
 
 if [ "$FOLDER" = "nvim-lazy" ]; then
   mkdir -vp "$DESTINATION/lua/packages"
+
+  mkdir -vp "$DESTINATION/lua/packages/coding"
+  mkdir -vp "$DESTINATION/lua/packages/interface"
+  mkdir -vp "$DESTINATION/lua/packages/treesitter"
+  mkdir -vp "$DESTINATION/lua/packages/editor"
+  mkdir -vp "$DESTINATION/lua/packages/utils"
+  mkdir -vp "$DESTINATION/lua/packages/extras"
 fi
 
 if [ "$FOLDER" = "nvim-bare" ]; then
